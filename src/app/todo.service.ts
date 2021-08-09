@@ -11,11 +11,11 @@ export class TodoService {
     private static STORAGE_KEY = 'todos-angular-5';
     private lastInsertId = 0;
     private todos: Todo[] = [];
-
+    token = "";
 
     todosResource = "/api/todos";
     constructor(private http: HttpClient) {
-
+        this.token = localStorage.getItem("token");
         this.getAll();
         if (this.todos.length > 0) {
             this.lastInsertId = this.todos[this.todos.length - 1].todoId;
@@ -43,7 +43,7 @@ export class TodoService {
 
     delete(todo: Todo): void {
         this.todos = this.todos.filter((t) => t !== todo);
-        this.http.delete(`${URL_TASKS_SERVICES}${this.todosResource}/delete?todoId=${todo.todoId}${URL_AUTHORIZATION}${TOKEN}`)
+        this.http.delete(`${URL_TASKS_SERVICES}${this.todosResource}/delete?todoId=${todo.todoId}${URL_AUTHORIZATION}${this.token}`)
             .subscribe(res => {}, (error) => {
                 console.log("error" + JSON.stringify(error));
             });
@@ -57,7 +57,7 @@ export class TodoService {
     toggleAll(completed: boolean): void {
         this.todos.forEach((t) => t.completed = completed);
 
-        this.http.put(`${URL_TASKS_SERVICES}${this.todosResource}/updateToggleAll${URL_AUTHORIZATION_OPT}${TOKEN}`, this.todos)
+        this.http.put(`${URL_TASKS_SERVICES}${this.todosResource}/updateToggleAll${URL_AUTHORIZATION_OPT}${this.token}`, this.todos)
             .subscribe((todos: Todo[]) => {
                 console.log("toggleAll: ", todos);
             }, (error) => {
@@ -92,12 +92,12 @@ export class TodoService {
 
 
     private fetch(): Observable < any > {
-        return this.http.get(`${URL_TASKS_SERVICES}${this.todosResource}/getAll${URL_AUTHORIZATION_OPT}${TOKEN}`);
+        return this.http.get(`${URL_TASKS_SERVICES}${this.todosResource}/getAll${URL_AUTHORIZATION_OPT}${this.token}`);
     }
 
     private save(todo: Todo): void {
         console.log("aca: ", todo);
-        this.http.post(`${URL_TASKS_SERVICES}${this.todosResource}/create${URL_AUTHORIZATION_OPT}${TOKEN}`, todo).subscribe((todo: Todo) => {}, (error) => {
+        this.http.post(`${URL_TASKS_SERVICES}${this.todosResource}/create${URL_AUTHORIZATION_OPT}${this.token}`, todo).subscribe((todo: Todo) => {}, (error) => {
             console.log("error" + JSON.stringify(error));
         });
 

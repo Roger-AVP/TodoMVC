@@ -1,0 +1,19 @@
+<div class="alert" *ngIf="error">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> {{error}}
+</div>
+
+<form (ngSubmit)="onSubmit()">
+
+    <div class="container">
+        <label for="uname"><b>Email</b></label>
+        <input type="email" [(ngModel)]="email" placeholder="email" name="uname" required>
+
+        <label for="psw"><b>Password</b></label>
+        <input type="password" [(ngModel)]="password" placeholder="Enter Password" name="psw" required>
+
+        <button type="submit">Login</button>
+        <label>
+    </label>
+    </div>
+
+</form>
