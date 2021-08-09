@@ -8,7 +8,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { TodoComponent } from './todo/todo.component';
 import { TodoService } from './todo.service';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
 
 
 const routes: Routes = [
@@ -22,7 +21,6 @@ const routes: Routes = [
     declarations: [
         AppComponent,
         TodoComponent,
-        LoginComponent
     ],
     imports: [
         BrowserModule,
