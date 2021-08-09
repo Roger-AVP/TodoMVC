@@ -8,25 +8,28 @@ import { HttpClientModule } from '@angular/common/http';
 import { TodoComponent } from './todo/todo.component';
 import { TodoService } from './todo.service';
 import { AppComponent } from './app.component';
+import { LoginComponent } from './login/login.component';
 
 
 const routes: Routes = [
     { path: '', component: TodoComponent, pathMatch: 'full' },
     { path: ':filter', component: TodoComponent },
+    { path: 'login', component: TodoComponent },
 
 ];
 
 @NgModule({
     declarations: [
         AppComponent,
-        TodoComponent
+        TodoComponent,
+        LoginComponent
     ],
     imports: [
         BrowserModule,
         FormsModule,
         AutofocusModule,
         HttpClientModule,
-        RouterModule.forRoot(routes, { useHash: true })
+        RouterModule.forRoot(routes)
     ],
     providers: [TodoService],
     bootstrap: [AppComponent]
