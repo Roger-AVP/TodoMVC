@@ -13,7 +13,6 @@ import { AppComponent } from './app.component';
 const routes: Routes = [
     { path: '', component: TodoComponent, pathMatch: 'full' },
     { path: ':filter', component: TodoComponent },
-    { path: 'login', component: TodoComponent },
 
 ];
 
