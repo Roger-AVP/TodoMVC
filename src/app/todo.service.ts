@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TOKEN, URL_AUTHORIZATION, URL_AUTHORIZATION_OPT, URL_TASKS_SERVICES } from './config/config';
+import { URL_AUTHORIZATION, URL_AUTHORIZATION_OPT, URL_TASKS_SERVICES } from './config/config';
 
 import { Todo } from './todo/todo.model';
 
@@ -57,16 +57,21 @@ export class TodoService {
     toggleAll(completed: boolean): void {
         this.todos.forEach((t) => t.completed = completed);
 
-        this.http.put(`${URL_TASKS_SERVICES}${this.todosResource}/updateToggleAll${URL_AUTHORIZATION_OPT}${this.token}`, this.todos)
-            .subscribe((todos: Todo[]) => {
-                console.log("toggleAll: ", todos);
-            }, (error) => {
+        this.http.put(`${URL_TASKS_SERVICES}${this.todosResource}/updatePerList${URL_AUTHORIZATION_OPT}${this.token}`, this.todos)
+            .subscribe((todos: Todo[]) => {}, (error) => {
                 console.log("error" + JSON.stringify(error));
             });
     }
 
     clearCompleted(): void {
+        const todos = this.todos.filter((t) => t.completed);
         this.todos = this.todos.filter((t) => !t.completed);
+        console.log("todos: ", todos);
+        this.http.put(`${URL_TASKS_SERVICES}${this.todosResource}/deletePerList${URL_AUTHORIZATION_OPT}${this.token}`, todos)
+            .subscribe(status => {}, (error) => {
+                console.log("error" + JSON.stringify(error));
+            });
+
     }
 
     remaining() {
