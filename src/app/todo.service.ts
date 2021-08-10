@@ -1,21 +1,20 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { URL_AUTHORIZATION, URL_AUTHORIZATION_OPT, URL_TASKS_SERVICES } from './config/config';
+import { TOKEN, URL_AUTHORIZATION, URL_AUTHORIZATION_OPT, URL_TASKS_SERVICES } from './config/config';
 
 import { Todo } from './todo/todo.model';
 
 @Injectable()
 export class TodoService {
 
-    private static STORAGE_KEY = 'todos-angular-5';
     private lastInsertId = 0;
     private todos: Todo[] = [];
     token = "";
 
     todosResource = "/api/todos";
     constructor(private http: HttpClient) {
-        this.token = localStorage.getItem("token");
+        this.token = localStorage.getItem(TOKEN);
         this.getAll();
         if (this.todos.length > 0) {
             this.lastInsertId = this.todos[this.todos.length - 1].todoId;
@@ -44,9 +43,7 @@ export class TodoService {
     delete(todo: Todo): void {
         this.todos = this.todos.filter((t) => t !== todo);
         this.http.delete(`${URL_TASKS_SERVICES}${this.todosResource}/delete?todoId=${todo.todoId}${URL_AUTHORIZATION}${this.token}`)
-            .subscribe(res => {}, (error) => {
-                console.log("error" + JSON.stringify(error));
-            });
+            .subscribe(res => {}, (error) => {});
     }
 
     toggle(todo: Todo): void {
@@ -58,19 +55,14 @@ export class TodoService {
         this.todos.forEach((t) => t.completed = completed);
 
         this.http.put(`${URL_TASKS_SERVICES}${this.todosResource}/updatePerList${URL_AUTHORIZATION_OPT}${this.token}`, this.todos)
-            .subscribe((todos: Todo[]) => {}, (error) => {
-                console.log("error" + JSON.stringify(error));
-            });
+            .subscribe((todos: Todo[]) => {}, (error) => {});
     }
 
     clearCompleted(): void {
         const todos = this.todos.filter((t) => t.completed);
         this.todos = this.todos.filter((t) => !t.completed);
-        console.log("todos: ", todos);
         this.http.put(`${URL_TASKS_SERVICES}${this.todosResource}/deletePerList${URL_AUTHORIZATION_OPT}${this.token}`, todos)
-            .subscribe(status => {}, (error) => {
-                console.log("error" + JSON.stringify(error));
-            });
+            .subscribe(status => {}, (error) => {});
 
     }
 
@@ -86,11 +78,11 @@ export class TodoService {
             .length;
     }
 
-    private getAll() {
+    getAll() {
         this.fetch().subscribe((todos: Todo[]) => {
             this.todos = todos;
         }, (error) => {
-            console.log("error" + JSON.stringify(error));
+
         });
 
     }
@@ -101,11 +93,12 @@ export class TodoService {
     }
 
     private save(todo: Todo): void {
-        console.log("aca: ", todo);
-        this.http.post(`${URL_TASKS_SERVICES}${this.todosResource}/create${URL_AUTHORIZATION_OPT}${this.token}`, todo).subscribe((todo: Todo) => {}, (error) => {
-            console.log("error" + JSON.stringify(error));
-        });
+        this.http.post(`${URL_TASKS_SERVICES}${this.todosResource}/create${URL_AUTHORIZATION_OPT}${this.token}`, todo).subscribe((todo: Todo) => {}, (error) => {});
 
+    }
+
+    getByCompleted(isCompleted: boolean) {
+        return this.http.get(`${URL_TASKS_SERVICES}${this.todosResource}/getByCompleted?completed=${isCompleted}${URL_AUTHORIZATION}${this.token}`);
     }
 
 

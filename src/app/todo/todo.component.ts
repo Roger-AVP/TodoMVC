@@ -30,11 +30,10 @@ export class TodoComponent implements OnInit, DoCheck, OnDestroy {
 
     constructor(private todoService: TodoService, private route: ActivatedRoute) {}
 
-    // ~ lifecycle
-
     ngOnInit() {
         this.routeSubscription = this.route.params.subscribe(params => {
             this.filter = FilterUtil.fromString(params['filter']);
+            this.filterData();
         });
 
     }
@@ -42,6 +41,7 @@ export class TodoComponent implements OnInit, DoCheck, OnDestroy {
     ngDoCheck() {
         this.todos = this.todoService.findAll();
         this.filteredTodos = this.todos.filter((t) => FilterUtil.accepts(t, this.filter));
+
         this.remaining = this.completed = 0;
         this.todos.forEach(t => t.completed ? this.completed++ : this.remaining++);
         this.allCompleted = this.todos.length === this.completed;
@@ -92,6 +92,29 @@ export class TodoComponent implements OnInit, DoCheck, OnDestroy {
 
     clearCompleted() {
         this.todoService.clearCompleted();
+    }
+
+    filterData() {
+        switch (this.filter) {
+
+            case Filter.ACTIVE:
+                this.getFilteredData(false);
+                break;
+            case Filter.COMPLETED:
+                this.getFilteredData(true);
+                break;
+            case Filter.ALL:
+                this.todoService.getAll();
+                break;
+        }
+    }
+
+    getFilteredData(isCompleted: boolean) {
+        this.todoService.getByCompleted(isCompleted)
+            .subscribe((todos: Todo[]) => {
+                this.todos = todos;
+            }, (error) => {});
+
     }
 
 }
